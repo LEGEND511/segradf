@@ -831,7 +831,7 @@ omar.reply("`تم حذف جميع الرتب بنجاح`")
   .setAuthor(message.author.username)
   .setColor("#9B59B6")
   .addField(" ** :gear: Server Support :gear: **" , "  **https://discord.gg/ZqVAasq**")
-     
+  .setMaxListeners()
      
   message.channel.sendEmbed(embed);
     }
