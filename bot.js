@@ -1,10 +1,115 @@
-const Discord = require("discord.js");
-const client = new Discord.Client();
-const { Client, Util } = require('discord.js');
-const dateFormat = require('dateformat');
-const fs = require('fs');
-const moment = require('moment');
+const Discord = require('discord.js');
+const db = require('quick.db');
+const client = new Discord.Client();   
+const giphy = require('giphy-api')();    
+const googl = require('goo.gl'); 
+const translate = require('google-translate-api'); 
+const fs = require("fs");      
+const getYoutubeID = require('get-youtube-id'); 
+const moment = require("moment");  
+const { Client, Util } = require('discord.js');  
+const UserBlocked = new Set();   
+const jimp = require('jimp');   
+const math = require('math-expression-evaluator'); 
+const stripIndents = require('common-tags').stripIndents;
+const figlet = require('figlet');
+const google = require('google-it'); 
+const queue = new Map();
+const zalgo = require('zalgolize');   
+const fetchVideoInfo = require('youtube-info');
+const YouTube = require('simple-youtube-api');
+const ytdl = require('ytdl-core');
+const youtube = new YouTube("AIzaSyAdORXg7UZUo7sePv97JyoDqtQVi3Ll0b8");
+const sql = require("sqlite");
+ const dateFormat = require('dateformat');
+ const pretty = require('pretty-ms') 
+,ti={}  
+,spee={};
+ 
 
+
+
+
+client.on("message", message => {
+	var prefix = "-";
+ if (message.content === "help") {
+	 message.channel.send('**تم ارسالك في الخاص** :mailbox_with_mail: ');
+  const embed = new Discord.RichEmbed() 
+      .setColor("#000000")
+      .setDescription(`
+	**___Welcome To Plus Bot___**
+[❖═════ General Commands ═══════❖]
+**
+╔═══╦╗──────╔══╗───╔╗
+║╔═╗║║──────║╔╗║──╔╝╚╗
+║╚═╝║║╔╗╔╦══╣╚╝╚╦═╩╗╔╝
+║╔══╣║║║║║══╣╔═╗║╔╗║║
+║║──║╚╣╚╝╠══║╚═╝║╚╝║╚╗
+╚╝──╚═╩══╩══╩═══╩══╩═╝
+
+:gear:-id  معلومات عن حسابك الشخصي
+
+:gear:-server معلومات حول السيرفر
+
+:gear:-move سحب عضو الى رومك الصوتي
+
+:gear:-clear مسح الرسائل الموجوده في الروم بعدد
+
+:gear:-avatar يعرض اك صورتك الشخصية
+
+:gear:-image يعرض لك صورة السيرفر
+
+ :gear:-credit يوريك كم الكريديت حقتك
+
+ :gear:-daily يسوي لك سحب فلوس
+
+ :gear:-rep يعطي ريب
+
+ :gear:-profile معلومات عامة مع الصورة
+
+[❖═════ Administrator Commands ═══════❖]
+ 
+ :gear:-bc لارسال برود كاست 
+ 
+ :gear:-ban حضر عضو من السيرفر
+
+ :gear:-kick طرد عضو من السيرفر
+
+ :gear:-mute اعضاء ميوت كتابي لعضو في السيرفر
+
+ :gear:-unmute فك الميوت عن عضو في السيرفر
+
+ :gear:-dac حذف جميع رومات السيرفر
+
+ :gear:-dar حذف جميع رتب السيرفر
+
+ :gear:-openroom فتح المحادثة في الروم
+
+ :gear:-closeroom قفل المحادثة في الرةوم
+
+ :gear:-role اعطاء رتبه لشخض معين
+
+ :gear:-role humans اعطاء رتب للبشريين
+
+ :gear:-role bots اعطاء رتبه للبوتات
+
+ :gear:-role all اعطاء رتبه للجميع سواء بشر او بوتات
+
+[❖═════ Other ═══════❖]
+
+:gear:-bot معلومات عن البوت
+
+:gear:-inv رابط اضافة البوت
+
+[❖═════ Support ═══════❖]
+
+:gear:-Support  سيرفر الدعم الفني للبوت 
+**		 
+`)
+   message.author.sendEmbed(embed)
+    
+   }
+   }); 
 
 client.on("message", message => {
 	var prefix = "-";
@@ -101,13 +206,13 @@ message.channel.sendEmbed(embed)
 }
 });
 client.on('message', message => {
-    if (message.content.startsWith("-info")) {
+    if (message.content.startsWith("-bot")) {
     message.channel.send({
         embed: new Discord.RichEmbed()
             .setAuthor(client.user.username,client.user.avatarURL)
             .setThumbnail(client.user.avatarURL)
             .setColor('RANDOM')
-            .setTitle('``INFO Super Bot`` ')
+            .setTitle('``INFO Plus Bot`` ')
             .addField('``My Ping``' , [`${Date.now() - message.createdTimestamp}` + 'MS'], true)
             .addField('``RAM Usage``', `[${(process.memoryUsage().rss / 1048576).toFixed()}MB]`, true)
             .addField('``servers``', [client.guilds.size], true)
@@ -724,7 +829,17 @@ omar.reply("`تم حذف جميع الرتب بنجاح`")
 
 
 
-
+  client.on('message', message => {
+     if (message.content === "-support") {
+     let embed = new Discord.RichEmbed()
+  .setAuthor(message.author.username)
+  .setColor("#9B59B6")
+  .addField(" ** :gear: Server Support :gear: **" , "  **https://discord.gg/TZ3dcyC**")
+     
+     
+  message.channel.sendEmbed(embed);
+    }
+});
 
 
 
@@ -739,7 +854,7 @@ client.on('message', msg => {
   command = command.slice(prefix.length);
   let args = msg.content.split(" ").slice(1);
 
-    if(command === "clr") {
+    if(command === "clear") {
         const emoji = client.emojis.find("name", "wastebasket")
     let textxt = args.slice(0).join("");
     if(msg.member.hasPermission("MANAGE_MESSAGES")) {
